@@ -1,0 +1,51 @@
+﻿@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+
+<RadzenPanelMenu>
+    <RadzenPanelMenuItem Text="Home" Icon="home" Path=""/>
+    <RadzenPanelMenuItem Text="Counter" Icon="account_box" Path="counter"/>
+    <RadzenPanelMenuItem Text="Weather" Icon="cloud" Path="weather" />
+    <RadzenPanelMenuItem Text="Auth Required" Icon="lock" Path="auth" />
+    <AuthorizeView>
+        <Authorized>
+            <RadzenPanelMenuItem Text="@context.User.Identity?.Name" Icon="account_circle" Path="Account/Manage"/>
+            <div class="nav-item px-3">
+                <form action="Account/Logout" method="post">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                    <button type="submit" class="nav-link">
+                        <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                    </button>
+                </form>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <RadzenPanelMenuItem Text="Register" Icon="how_to_reg" Path="Account/Register" />
+            <RadzenPanelMenuItem Text="Login" Icon="login" Path="Account/Login" />
+        </NotAuthorized>
+    </AuthorizeView>
+</RadzenPanelMenu>
+
+@code {
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
+

@@ -1,0 +1,16 @@
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+<RadzenText TextStyle="TextStyle.H3">Counter</RadzenText>
+<RadzenText>Current count: @_currentCount</RadzenText>
+<RadzenButton Variant="Variant.Flat" Click="@(args => IncrementCount())" Text="Click me" ButtonStyle="ButtonStyle.Primary" />
+
+@code {
+    private int _currentCount = 0;
+
+    private void IncrementCount()
+    {
+        _currentCount++;
+    }
+}
